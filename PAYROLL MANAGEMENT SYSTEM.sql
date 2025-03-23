@@ -378,4 +378,28 @@ delimiter ;
  call higest_salary(5);
  
 
+-- Retrieve Employees with No Overtime
+
+DELIMITER $$
+CREATE PROCEDURE GetEmployeesWithNoOvertime(
+    IN month INT,
+    IN year INT
+)
+BEGIN
+    SELECT 
+        e.EmployeeID,
+        e.FirstName,
+        e.LastName
+    FROM Employees e
+    WHERE e.EmployeeID NOT IN (
+        SELECT DISTINCT p.EmployeeID
+        FROM Overtime o
+        JOIN Payroll p ON o.PayrollID = p.PayrollID
+        WHERE MONTH(o.Date) = month AND YEAR(o.Date) = year
+    );
+END $$
+DELIMITER ;
+
+-- Example usage:
+CALL GetEmployeesWithNoOvertime(3, 2025);
  
